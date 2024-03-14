@@ -1,17 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Models } from 'appwrite';
 
-interface User {
-  id: string;
-  email: string;
-  password: string;
-}
-
-interface authState {
+type AuthState = {
   status: boolean;
-  userData: User | null;
-}
+  userData: Models.User<Models.Preferences> | null;
+};
 
-const initialState: authState = {
+const initialState: AuthState = {
   status: false,
   userData: null,
 };
@@ -20,8 +15,9 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    login: (state, action: PayloadAction<User | null>) => {
-      (state.status = true), (state.userData = action.payload);
+    login: (state, action: PayloadAction<Models.User<Models.Preferences>>) => {
+      state.status = true;
+      state.userData = action.payload;
     },
     logout: (state) => {
       state.status = false;

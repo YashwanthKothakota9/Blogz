@@ -1,17 +1,14 @@
 import React from 'react';
 
-interface ButtonProps {
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode; // Accepts any valid React children (text, elements, etc.)
-  //type?: 'button' | 'submit' | 'reset'; // Common button types (default to "button")
   bgColor?: string; // Custom background color classes
   textColor?: string; // Custom text color classes
   className?: string; // Additional CSS classes for customization
-  props: React.ButtonHTMLAttributes<HTMLButtonElement>; // Other standard button props
 }
 
 const Button = ({
   children,
-  //type = 'button',
   bgColor = 'bg-blue-600',
   textColor = 'text-white',
   className = '',

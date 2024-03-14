@@ -2,6 +2,22 @@ import config from '../config/config';
 
 import { Client, Databases, Storage, Query, ID } from 'appwrite';
 
+export type PostDocument = {
+  title: string;
+  slug: string;
+  content: string;
+  featuredImage: string;
+  status: string;
+  userId: string;
+};
+
+type UpdatePostDocument = {
+  title: string;
+  content: string;
+  featuredImage: string;
+  status: string;
+};
+
 export class Service {
   client = new Client();
   databases;
@@ -28,7 +44,7 @@ export class Service {
     }
   }
 
-  async getPosts(queries = [Query.equal('status', 'active')]) {
+  async getPosts(queries = [Query.equal('status', 'true')]) {
     try {
       return await this.databases.listDocuments(
         config.appwriteDatabaseId,
@@ -41,27 +57,13 @@ export class Service {
     }
   }
 
-  async createPost({
-    title,
-    slug,
-    content,
-    featuredImage,
-    status,
-    userId,
-  }: {
-    title: string;
-    slug: string;
-    content: string;
-    featuredImage: string;
-    status: boolean;
-    userId: string;
-  }) {
+  async createPost(document: PostDocument) {
     try {
       return await this.databases.createDocument(
         config.appwriteDatabaseId,
         config.appwriteCollectionId,
-        slug,
-        { title, content, featuredImage, status, userId }
+        document.slug,
+        document
       );
     } catch (error) {
       console.log('Appwrite Service :: createPost() :: ', error);
@@ -69,26 +71,13 @@ export class Service {
     }
   }
 
-  async updatePost(
-    slug: string,
-    {
-      title,
-      content,
-      featuredImage,
-      status,
-    }: {
-      title: string;
-      content: string;
-      featuredImage: string;
-      status: boolean;
-    }
-  ) {
+  async updatePost(slug: string, document: UpdatePostDocument) {
     try {
       return await this.databases.updateDocument(
         config.appwriteDatabaseId,
         config.appwriteCollectionId,
         slug,
-        { title, content, featuredImage, status }
+        document
       );
     } catch (error) {
       console.log('Appwrite Service :: updatePost() :: ', error);
@@ -135,7 +124,7 @@ export class Service {
   }
 
   getFilePreview(fileId: string) {
-    return this.bucket.getFilePreview(config.appwriteBucketId, fileId).href;
+    return this.bucket.getFilePreview(config.appwriteBucketId, fileId);
   }
 }
 
