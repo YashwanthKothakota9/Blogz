@@ -1,5 +1,6 @@
 import { Control, Controller } from 'react-hook-form';
 import { Editor } from '@tinymce/tinymce-react';
+import config from '../config/config';
 
 interface RealTimeEditorProps {
   name: string;
@@ -26,7 +27,7 @@ export default function RealTimeEditor({
         control={control}
         render={({ field: { onChange } }) => (
           <Editor
-            apiKey="101ppilwg70kwc18m5om82x16eayw3j6gxeucgr0j2ow9fj3"
+            apiKey={config.tinyApiKey}
             initialValue={defaultValue}
             init={{
               branding: false,
