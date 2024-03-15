@@ -14,6 +14,8 @@ function EditPost() {
     if (slug) {
       appWriteService.getPost(slug).then((post) => {
         if (post) {
+          console.log('EditPost:');
+          console.log(post);
           setPost(post);
         }
       });

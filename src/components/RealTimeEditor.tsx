@@ -15,6 +15,9 @@ export default function RealTimeEditor({
   label,
   defaultValue = '',
 }: RealTimeEditorProps) {
+  console.log('From RTE:');
+  console.log(defaultValue);
+
   return (
     <div className="w-full">
       {label && <label className="inline-block mb-1 pl-1">{label}</label>}
@@ -23,6 +26,7 @@ export default function RealTimeEditor({
         control={control}
         render={({ field: { onChange } }) => (
           <Editor
+            apiKey="101ppilwg70kwc18m5om82x16eayw3j6gxeucgr0j2ow9fj3"
             initialValue={defaultValue}
             init={{
               branding: false,
@@ -39,22 +43,21 @@ export default function RealTimeEditor({
                 'anchor',
                 'searchreplace',
                 'visualblocks',
-                'code',
+                'codesample',
                 'fullscreen',
                 'insertdatetime',
                 'media',
                 'table',
-                'code',
                 'help',
                 'wordcount',
               ],
               toolbar:
                 'undo redo | blocks | ' +
-                'bold italic forecolor | alignleft aligncenter ' +
+                'codesample | bold italic forecolor | alignleft aligncenter ' +
                 'alignright alignjustify | bullist numlist outdent indent | ' +
                 'removeformat | help',
               content_style:
-                'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+                'body { font-family:"Space Grotesk",Arial,sans-serif; font-size:16px }',
             }}
             onEditorChange={onChange}
           />

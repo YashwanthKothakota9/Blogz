@@ -42,7 +42,7 @@ export default function Signup() {
   return (
     <div className="flex items-center justify-center">
       <div
-        className={`mx-auto w-full max-w-lg bg-gray-100 rounded-xl p-10 border border-black/10`}
+        className={`mx-auto w-full max-w-lg bg-apple-200 text-apple-900 rounded-xl p-10 border border-apple-950/10`}
       >
         <div className="mb-2 flex justify-center">
           <span className="inline-block w-full max-w-[100px]">
@@ -56,30 +56,30 @@ export default function Signup() {
           Already have an account?&nbsp;
           <Link
             to="/login"
-            className="font-medium text-primary transition-all duration-200 hover:underline"
+            className="font-medium text-primary transition-all duration-200 hover:underline hover:underline-offset-4"
           >
             Sign In
           </Link>
         </p>
         {error && <p className="text-red-600 mt-8 text-center">{error}</p>}
-        <form onSubmit={handleSubmit(createUser)} className="mt-8">
+        <form onSubmit={handleSubmit(createUser)} className="mt-8 text-left">
           <div className="space-y-5">
             <Input
               {...register('name', { required: true })}
-              label="Full Name : "
+              label="Full Name"
               placeholder="Full Name"
             />
             <Input
               {...register('email', {
                 required: true,
               })}
-              label="Email : "
+              label="Email"
               placeholder="Email Address"
               type="email"
             />
             <Input
               {...register('password', { required: true })}
-              label="Password : "
+              label="Password"
               type="password"
               placeholder="Password"
             />

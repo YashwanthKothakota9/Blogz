@@ -9,38 +9,66 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { RootState } from '../../store/store';
 import { Models } from 'appwrite';
-
-interface DataProps {
-  title: string;
-  slug: string;
-  content: string;
-  status: string;
-  featuredImage: File | null;
-}
+import z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 type PostProps = {
   post?: Models.Document;
 };
 
+const formSchema = z.object({
+  title: z
+    .string()
+    .min(5, { message: 'title must be atleast 5 characters.' })
+    .max(20, { message: 'title must be atmost 20 characters' }),
+  slug: z
+    .string()
+    .min(5, { message: 'title must be atleast 5 characters.' })
+    .max(20, { message: 'title must be atmost 20 characters' }),
+  content: z.string(),
+  status: z.string(),
+  featuredImage: z
+    .any()
+    .refine((featuredImage) => featuredImage?.length == 1, 'File is required.')
+    .refine(
+      (featuredImage) => featuredImage[0]?.size <= 3000000,
+      `Max file size is 3MB.`
+    ),
+});
+
 export default function PostForm({ post }: PostProps) {
-  const { register, handleSubmit, watch, setValue, control, getValues } =
-    useForm<DataProps>({
-      defaultValues: {
-        title: post?.title || '',
-        slug: post?.slug || '',
-        content: post?.content || '',
-        status: post?.status || 'true',
-        featuredImage: null,
-      },
-    });
+  console.log('Post Form:');
+  console.log(post);
+
+  const slugTransform = useCallback((value: string | undefined) => {
+    if (value && typeof value === 'string') {
+      return value
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-zA-Z\d\s]+/g, '-')
+        .replace(/\s/g, '-');
+    }
+  }, []);
+
+  const { register, handleSubmit, watch, setValue, control } = useForm<
+    z.infer<typeof formSchema>
+  >({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: post?.title || '',
+      slug: slugTransform(post?.title) || '',
+      content: post?.content || '',
+      status: post?.status || 'true',
+    },
+  });
 
   const navigate = useNavigate();
   const userData = useSelector((state: RootState) => state.auth.userData);
 
-  const submit = async (data: DataProps) => {
+  const submit = async (data: z.infer<typeof formSchema>) => {
     if (post) {
-      const file = data.featuredImage
-        ? await appWriteService.uploadFile(data.featuredImage)
+      const file = data.featuredImage[0]
+        ? await appWriteService.uploadFile(data.featuredImage[0])
         : null;
 
       if (file) {
@@ -56,7 +84,9 @@ export default function PostForm({ post }: PostProps) {
         navigate(`/post/${dbPost.$id}`);
       }
     } else {
-      const file = await appWriteService.uploadFile(data.featuredImage!);
+      console.log(data.featuredImage[0]);
+      console.log(data);
+      const file = await appWriteService.uploadFile(data.featuredImage[0]);
       if (file) {
         const fileId = file.$id;
         const dbPost = await appWriteService.createPost({
@@ -71,16 +101,6 @@ export default function PostForm({ post }: PostProps) {
     }
   };
 
-  const slugTransform = useCallback((value: string | undefined) => {
-    if (value && typeof value === 'string') {
-      return value
-        .trim()
-        .toLowerCase()
-        .replace(/[^a-zA-Z\d\s]+/g, '-')
-        .replace(/\s/g, '-');
-    }
-  }, []);
-
   useEffect(() => {
     watch((value, { name }) => {
       if (name === 'title') {
@@ -89,19 +109,20 @@ export default function PostForm({ post }: PostProps) {
         });
       }
     });
-  }, [watch, slugTransform, setValue]);
+  });
 
   return (
     <form onSubmit={handleSubmit(submit)} className="flex flex-wrap">
-      <div className="w-2/3 px-2">
+      <div className="w-2/3 px-2 text-left">
         <Input
           label="Title"
           placeholder="Title"
           className="mb-4"
           {...register('title', { required: true })}
         />
+
         <Input
-          label="Slug"
+          label="Slug :"
           placeholder="Slug"
           className="mb-4"
           {...register('slug', { required: true })}
@@ -111,19 +132,21 @@ export default function PostForm({ post }: PostProps) {
             });
           }}
         />
+
         <RealTimeEditor
-          label="Content:"
+          label="Content"
           name="content"
           control={control}
-          defaultValue={getValues('content')}
+          defaultValue={post?.content}
         />
       </div>
-      <div className="w-1/3 px-2">
+
+      <div className="w-1/3 px-2 text-left">
         <Input
           label="Featured Image"
           type="file"
           className="mb-4"
-          accept="image/png, image/jpg, image/jpeg, image/svg"
+          accept="image/png, image/jpg, image/jpeg"
           {...register('featuredImage', { required: !post })}
         />
         {post && (
@@ -143,7 +166,7 @@ export default function PostForm({ post }: PostProps) {
         />
         <Button
           type="submit"
-          bgColor={post ? 'bg-green-400' : ''}
+          // bgColor={post ? 'bg-apple-800' : ''}
           className="w-full"
         >
           {post ? 'Update' : 'Submit'}

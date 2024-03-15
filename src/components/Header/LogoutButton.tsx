@@ -13,7 +13,7 @@ export default function LogoutButton() {
 
   return (
     <button
-      className="inline-block px-6 py-2 duration-200 hover:bg-blue-100 rounded-full"
+      className="text-apple-900 px-2 hover:underline hover:underline-offset-8 transition duration-500 text-xl hover:font-semibold"
       onClick={logoutHandler}
     >
       Logout

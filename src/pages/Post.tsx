@@ -4,10 +4,11 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import appwriteService from '../appwrite/db-storage-config';
 import { Button } from '../components';
 import { Container } from '../components';
-import parse from 'html-react-parser';
+
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
 import { Models } from 'appwrite';
+import ParseHTML from '../components/ParseHTML';
 
 function Post() {
   const [post, setPost] = useState<Models.Document | null>(null);
@@ -41,28 +42,33 @@ function Post() {
   return post ? (
     <div className="py-8">
       <Container>
-        <div className="w-full flex justify-center mb-4 relative border rounded-xl p-2">
+        <div className="w-full flex flex-col gap-4 justify-center mb-4 relative border border-apple-500 rounded-xl p-2">
           <img
             src={appwriteService.getFilePreview(post.featuredImage).href}
             alt={post.title}
-            className="rounded-xl"
+            className="rounded-xl object-cover"
           />
           {isAuthor && (
-            <div className="absolute-right-6 top-6">
+            <div className="flex gap-2 items-center justify-center">
               <Link to={`/edit-post/${post.$id}`}>
-                <Button className="mr-3" bgColor="bg-green-500">
+                <Button className="mr-3" bgColor="bg-apple-500">
                   Edit
                 </Button>
               </Link>
-              <Button onClick={deletePost} bgColor="bg-red-500">
+              <Button
+                onClick={deletePost}
+                bgColor="bg-red-500"
+                className="hover:bg-red-700"
+              >
                 Delete
               </Button>
             </div>
           )}
         </div>
-        <div className="w-full mb-6">
+        <div className="w-full mb-6 text-left ml-6 mt-6">
           <h1 className="text-2xl font-bold">{post.title}</h1>
-          <div className="browser-css">{parse(post.content)}</div>
+          {/* <div className="browser-css">{parse(post.content)}</div> */}
+          <ParseHTML data={post.content} />
         </div>
       </Container>
     </div>

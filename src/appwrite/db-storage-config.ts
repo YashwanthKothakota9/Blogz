@@ -2,6 +2,10 @@ import config from '../config/config';
 
 import { Client, Databases, Storage, Query, ID } from 'appwrite';
 
+const bMap = new Map<string, boolean>();
+bMap.set('true', true);
+bMap.set('false', false);
+
 export type PostDocument = {
   title: string;
   slug: string;
@@ -44,7 +48,7 @@ export class Service {
     }
   }
 
-  async getPosts(queries = [Query.equal('status', 'true')]) {
+  async getPosts(queries = [Query.equal('status', true)]) {
     try {
       return await this.databases.listDocuments(
         config.appwriteDatabaseId,
@@ -57,13 +61,21 @@ export class Service {
     }
   }
 
-  async createPost(document: PostDocument) {
+  async createPost({
+    content,
+    featuredImage,
+    status,
+    title,
+    slug,
+    userId,
+  }: PostDocument) {
     try {
+      const bStatus: boolean = bMap.get(status)!;
       return await this.databases.createDocument(
         config.appwriteDatabaseId,
         config.appwriteCollectionId,
-        document.slug,
-        document
+        slug,
+        { content, featuredImage, status: bStatus, title, userId }
       );
     } catch (error) {
       console.log('Appwrite Service :: createPost() :: ', error);
@@ -71,13 +83,17 @@ export class Service {
     }
   }
 
-  async updatePost(slug: string, document: UpdatePostDocument) {
+  async updatePost(
+    slug: string,
+    { title, content, featuredImage, status }: UpdatePostDocument
+  ) {
     try {
+      const bStatus: boolean = bMap.get(status)!;
       return await this.databases.updateDocument(
         config.appwriteDatabaseId,
         config.appwriteCollectionId,
         slug,
-        document
+        { title, content, featuredImage, status: bStatus }
       );
     } catch (error) {
       console.log('Appwrite Service :: updatePost() :: ', error);
