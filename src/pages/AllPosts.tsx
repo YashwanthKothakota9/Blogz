@@ -7,19 +7,16 @@ import { Bars } from 'react-loader-spinner';
 
 function AllPosts() {
   const [posts, setPosts] = useState<Models.Document[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    setLoading(true);
     appWriteService.getPosts([]).then((posts) => {
       if (posts) {
         setPosts(posts.documents);
       }
     });
-    setLoading(false);
   }, []);
 
-  if (loading) {
+  if (posts.length === 0) {
     return (
       <Bars
         height="80"
@@ -30,18 +27,6 @@ function AllPosts() {
         wrapperClass=""
         visible={true}
       />
-    );
-  }
-
-  if (posts.length === 0) {
-    return (
-      <div className="w-full py-8">
-        <Container>
-          <div className="flex flex-wrap">
-            <h1>Please login to read and write amazing blogs!</h1>
-          </div>
-        </Container>
-      </div>
     );
   }
 

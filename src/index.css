@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 body {
-  @apply bg-apple-50 font-space-grotesk;
+  @apply bg-apple-100 font-space-grotesk container;
 }
 
 @layer utilities {

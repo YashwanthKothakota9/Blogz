@@ -8,6 +8,7 @@ import Logo from './Logo';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { login as authLogin } from '../store/authSlice';
+import { Bars } from 'react-loader-spinner';
 
 type LoginData = {
   email: string;
@@ -19,9 +20,11 @@ export default function Login() {
   const dispatch = useDispatch();
   const { register, handleSubmit } = useForm<LoginData>();
   const [error, setError] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
 
   const loginUser = async (data: LoginData) => {
     setError('');
+    setLoading(true);
     try {
       const session = await authService.login(data);
       if (session) {
@@ -33,8 +36,24 @@ export default function Login() {
       const message =
         error instanceof Error ? error.message : 'Something went wrong';
       setError(message);
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <Bars
+        height="80"
+        width="80"
+        color="#4fa94d"
+        ariaLabel="bars-loading"
+        wrapperStyle={{}}
+        wrapperClass=""
+        visible={true}
+      />
+    );
+  }
 
   return (
     <div className="flex items-center justify-center w-full mt-8">

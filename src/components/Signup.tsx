@@ -8,6 +8,7 @@ import Logo from './Logo';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { login } from '../store/authSlice';
+import { Bars } from 'react-loader-spinner';
 
 type SignUpData = {
   name: string;
@@ -18,12 +19,14 @@ type SignUpData = {
 export default function Signup() {
   const navigate = useNavigate();
   const [error, setError] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
   const dispatch = useDispatch();
 
   const { register, handleSubmit } = useForm<SignUpData>();
 
   const createUser = async (data: SignUpData) => {
     setError('');
+    setLoading(true);
     try {
       const userData = await authService.createAccount(data);
       if (userData) {
@@ -36,8 +39,24 @@ export default function Signup() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       setError(error);
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <Bars
+        height="80"
+        width="80"
+        color="#4fa94d"
+        ariaLabel="bars-loading"
+        wrapperStyle={{}}
+        wrapperClass=""
+        visible={true}
+      />
+    );
+  }
 
   return (
     <div className="flex items-center justify-center">
