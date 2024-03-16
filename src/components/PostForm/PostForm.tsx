@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Button from '../Button';
 import Input from '../Input';
@@ -11,6 +11,7 @@ import { RootState } from '../../store/store';
 import { Models } from 'appwrite';
 import z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Hourglass } from 'react-loader-spinner';
 
 type PostProps = {
   post?: Models.Document;
@@ -40,6 +41,8 @@ export default function PostForm({ post }: PostProps) {
   console.log('Post Form:');
   console.log(post);
 
+  const [submitting, setSubmitting] = useState<boolean>(false);
+
   const slugTransform = useCallback((value: string | undefined) => {
     if (value && typeof value === 'string') {
       return value
@@ -50,9 +53,14 @@ export default function PostForm({ post }: PostProps) {
     }
   }, []);
 
-  const { register, handleSubmit, watch, setValue, control } = useForm<
-    z.infer<typeof formSchema>
-  >({
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    control,
+    formState: { errors },
+  } = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: post?.title || '',
@@ -66,6 +74,7 @@ export default function PostForm({ post }: PostProps) {
   const userData = useSelector((state: RootState) => state.auth.userData);
 
   const submit = async (data: z.infer<typeof formSchema>) => {
+    setSubmitting(true);
     if (post) {
       const file = data.featuredImage[0]
         ? await appWriteService.uploadFile(data.featuredImage[0])
@@ -99,6 +108,7 @@ export default function PostForm({ post }: PostProps) {
         }
       }
     }
+    setSubmitting(false);
   };
 
   useEffect(() => {
@@ -120,7 +130,9 @@ export default function PostForm({ post }: PostProps) {
           className="mb-4"
           {...register('title', { required: true })}
         />
-
+        {errors.title && (
+          <p className="text-red-500 text-xs italic">{errors.title.message}</p>
+        )}
         <Input
           label="Slug :"
           placeholder="Slug"
@@ -132,6 +144,9 @@ export default function PostForm({ post }: PostProps) {
             });
           }}
         />
+        {errors.slug && (
+          <p className="text-red-500 text-xs italic">{errors.slug.message}</p>
+        )}
 
         <RealTimeEditor
           label="Content"
@@ -139,6 +154,11 @@ export default function PostForm({ post }: PostProps) {
           control={control}
           defaultValue={post?.content}
         />
+        {errors.content && (
+          <p className="text-red-500 text-xs italic">
+            {errors.content.message}
+          </p>
+        )}
       </div>
 
       <div className="w-1/3 px-2 text-left">
@@ -149,6 +169,7 @@ export default function PostForm({ post }: PostProps) {
           accept="image/png, image/jpg, image/jpeg"
           {...register('featuredImage', { required: !post })}
         />
+
         {post && (
           <div className="w-full mb-4">
             <img
@@ -164,12 +185,29 @@ export default function PostForm({ post }: PostProps) {
           className="mb-4"
           {...register('status', { required: true })}
         />
+        {errors.status && (
+          <p className="text-red-500 text-xs italic">{errors.status.message}</p>
+        )}
         <Button
           type="submit"
           // bgColor={post ? 'bg-apple-800' : ''}
-          className="w-full"
+          className="w-full flex items-center justify-center"
         >
-          {post ? 'Update' : 'Submit'}
+          {submitting ? (
+            <Hourglass
+              visible={true}
+              width={'18'}
+              height={'18'}
+              ariaLabel="hourglass-loading"
+              wrapperStyle={{}}
+              wrapperClass=""
+              colors={['#c2f0c2', '#f1fcf1']}
+            />
+          ) : post ? (
+            'Update'
+          ) : (
+            'Submit'
+          )}
         </Button>
       </div>
     </form>

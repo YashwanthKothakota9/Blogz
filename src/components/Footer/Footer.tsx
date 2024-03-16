@@ -6,26 +6,26 @@ function Footer() {
     <section className="relative overflow-hidden py-10 bg-apple-200  text-apple-950 rounded-b-lg">
       <div className="relative z-10 mx-auto max-w-7xl px-4">
         <div className="-m-6 flex flex-wrap">
-          <div className="w-1/2 p-6">
-            <div className="flex h-full flex-col justify-between items-center">
+          <div className="w-full md:w-1/2 p-6 flex justify-center md:justify-start">
+            <div className="flex h-full flex-col justify-between items-center md:items-start">
               <div className="inline-flex items-center">
                 <Logo width="50px" />
               </div>
-              <h3 className="text-xl italic font-semibold">
+              <h3 className="text-xl italic font-semibold text-center md:text-left mb-2">
                 Blogs that will make you fall in love with writing!
               </h3>
               <div>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 text-center md:text-left mb-2">
                   &copy; Copyright 2024 Yashwanth Kothakota. All Rights
                   Reserved.
                 </p>
               </div>
             </div>
           </div>
-          <div className="flex gap-9">
-            <div className="w-1/2 p-6 text-left">
+          <div className="w-full md:flex md:w-1/2 gap-9">
+            <div className="w-full p-6 text-center md:text-left">
               <div className="h-full">
-                <h3 className="tracking-px mb-9  text-xs font-semibold uppercase text-gray-400">
+                <h3 className="tracking-wide mb-9 text-xs font-semibold uppercase text-gray-400">
                   Links
                 </h3>
                 <ul>
@@ -56,9 +56,9 @@ function Footer() {
                 </ul>
               </div>
             </div>
-            <div className="w-1/2 p-6 text-left">
+            <div className="w-full p-6 text-center md:text-left">
               <div className="h-full">
-                <h3 className="tracking-px mb-9  text-xs font-semibold uppercase text-gray-400">
+                <h3 className="tracking-wide mb-9 text-xs font-semibold uppercase text-gray-400">
                   Legals
                 </h3>
                 <ul>

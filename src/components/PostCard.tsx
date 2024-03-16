@@ -9,15 +9,15 @@ interface PostCardProps {
 const PostCard = ({ post }: PostCardProps) => {
   return (
     <Link to={`/post/${post.$id}`}>
-      <div className="w-[250px] h-[200px] bg-apple-300 border border-apple-900 rounded-xl p-4">
-        <div className="w-full justify-center mb-4">
+      <div className="w-full h-auto bg-apple-300 border border-apple-900 rounded-xl p-4 flex flex-col">
+        <div className="w-full flex justify-center mb-4">
           <img
             src={appwriteService.getFilePreview(post.featuredImage).href}
             alt={post.title}
-            className="rounded-md object-contain"
+            className="max-w-full h-auto rounded-md object-contain"
           />
         </div>
-        <h2 className="text-xl font-bold">{post.title}</h2>
+        <h2 className="text-xl font-bold text-center">{post.title}</h2>
       </div>
     </Link>
   );

@@ -9,9 +9,12 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
 import { Models } from 'appwrite';
 import ParseHTML from '../components/ParseHTML';
+import { Hourglass } from 'react-loader-spinner';
 
 function Post() {
   const [post, setPost] = useState<Models.Document | null>(null);
+
+  const [deleting, setIsDeleting] = useState<boolean>(false);
   const { slug } = useParams();
   const navigate = useNavigate();
   const userData = useSelector((state: RootState) => state.auth.userData);
@@ -31,12 +34,14 @@ function Post() {
   }, [slug, navigate]);
 
   const deletePost = () => {
+    setIsDeleting(true);
     appwriteService.deletePost(post?.$id ?? '').then((status) => {
       if (status) {
         appwriteService.deleteFile(post?.featuredImage ?? '');
         navigate('/');
       }
     });
+    setIsDeleting(false);
   };
 
   return post ? (
@@ -60,7 +65,19 @@ function Post() {
                 bgColor="bg-red-500"
                 className="hover:bg-red-700"
               >
-                Delete
+                {deleting ? (
+                  <Hourglass
+                    visible={true}
+                    width="18"
+                    height="18"
+                    ariaLabel="hourglass-loading"
+                    wrapperStyle={{}}
+                    wrapperClass=""
+                    colors={['#c2f0c2', '#f1fcf1']}
+                  />
+                ) : (
+                  'Delete'
+                )}
               </Button>
             </div>
           )}
