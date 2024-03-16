@@ -32,6 +32,14 @@ function Home() {
 
   return (
     <div className="w-full py-8">
+      <div className="p-4 mt-4 mb-6">
+        <h1 className="text-4xl font-bold text-center md:text-center">
+          This is a Blogging Website which makes you fall in love with writing!
+        </h1>
+        <p className="text-xl text-center md:text-center">
+          Sign up and Add your story
+        </p>
+      </div>
       <Container>
         <div className="flex flex-wrap">
           {posts.map((post) => (
